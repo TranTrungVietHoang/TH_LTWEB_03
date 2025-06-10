@@ -1,0 +1,79 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model TH_LTWEB_03.Models.Category
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-gradient-success text-white text-center py-4">
+                    <div class="category-icon bg-white text-success mx-auto mb-3" style="width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-folder fa-2x"></i>
+                    </div>
+                    <h1 class="mb-2 fw-bold">@Model.Name</h1>
+                    <p class="mb-0 opacity-75">Thông tin chi tiết danh mục</p>
+                </div>
+            </div>
+
+            <!-- Details Card -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item mb-4">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-hashtag me-2"></i>ID Danh Mục
+                                </label>
+                                <div class="fs-5">@Model.Id</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item mb-4">
+                                <label class="form-label fw-bold text-muted">
+                                    <i class="fas fa-tag me-2"></i>Tên Danh Mục
+                                </label>
+                                <div class="fs-5 fw-bold text-primary">@Model.Name</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                        <a asp-action="Index" class="btn btn-outline-primary btn-lg px-4">
+                            <i class="fas fa-arrow-left me-2"></i>Quay Lại Danh Sách
+                        </a>
+                        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning btn-lg px-4 text-white">
+                            <i class="fas fa-edit me-2"></i>Chỉnh Sửa
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg px-4"
+                           onclick="return confirm('Bạn có chắc muốn xóa danh mục @Model.Name?')">
+                            <i class="fas fa-trash me-2"></i>Xóa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-success {
+        background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+    }
+
+    .info-item {
+        border-left: 4px solid #007bff;
+        padding-left: 15px;
+    }
+</style>

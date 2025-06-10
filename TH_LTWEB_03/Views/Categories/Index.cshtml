@@ -1,0 +1,248 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@using System.Linq
+@model IEnumerable<TH_LTWEB_03.Models.Category>
+
+@{
+    ViewData["Title"] = "Category List";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+        }
+
+        .category-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            border: none;
+        }
+
+            .category-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+            }
+
+        .search-container {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 15px;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid py-4">
+        <!-- Toast Notifications -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="toast-container">
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header bg-success text-white">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong class="me-auto">Thành công</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        @TempData["SuccessMessage"]
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Header Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm bg-gradient-primary text-white">
+                    <div class="card-body py-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h1 class="mb-2 fw-bold">
+                                    <i class="fas fa-folder-open me-3"></i>Quản Lý Danh Mục
+                                </h1>
+                                <p class="mb-0 opacity-75 fs-5">Tổ chức và quản lý các danh mục sản phẩm</p>
+                            </div>
+                            <div class="stats-card p-3 text-center">
+                                <div class="h3 mb-0 fw-bold">@Model.Count()</div>
+                                <small class="opacity-75">Tổng danh mục</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Actions Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm search-container">
+                    <div class="card-body py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <form asp-action="Index" method="get" class="d-flex flex-grow-1 me-4">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-white border-0">
+                                        <i class="fas fa-search text-muted"></i>
+                                    </span>
+                                    <input type="text" name="searchString" class="form-control border-0 shadow-sm"
+                                           placeholder="Tìm kiếm danh mục..." value="@ViewData["CurrentFilter"]" />
+                                    <button type="submit" class="btn btn-light btn-lg px-4">
+                                        <i class="fas fa-search me-2"></i>Tìm kiếm
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Add" class="btn btn-light btn-lg px-4">
+                                    <i class="fas fa-plus me-2"></i>Thêm Danh Mục
+                                </a>
+                                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-light btn-lg px-4">
+                                    <i class="fas fa-box me-2"></i>Sản phẩm
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div class="row">
+            @if (Model.Any())
+            {
+                @foreach (var category in Model)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100 shadow-sm category-card">
+                            <div class="card-body text-center p-4">
+                                <div class="category-icon bg-gradient-success text-white mb-3">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+
+                                <h5 class="card-title fw-bold mb-3">@category.Name</h5>
+                                <p class="text-muted small mb-4">ID: @category.Id</p>
+
+                                <div class="btn-group-vertical w-100 gap-2">
+                                    <a asp-action="Details" asp-route-id="@category.Id"
+                                       class="btn btn-outline-info">
+                                        <i class="fas fa-eye me-2"></i>Chi tiết
+                                    </a>
+                                    <a asp-action="Update" asp-route-id="@category.Id"
+                                       class="btn btn-outline-warning">
+                                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@category.Id"
+                                       class="btn btn-outline-danger"
+                                       onclick="return confirm('Bạn có chắc muốn xóa danh mục @category.Name?')">
+                                        <i class="fas fa-trash me-2"></i>Xóa
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                            <h4 class="text-muted mb-3">Chưa có danh mục nào</h4>
+                            <p class="text-muted mb-4">
+                                @if (!string.IsNullOrEmpty(ViewData["CurrentFilter"]?.ToString()))
+                                {
+                                    <span>Không tìm thấy danh mục phù hợp với từ khóa "<strong>@ViewData["CurrentFilter"]</strong>"</span>
+                                }
+                                else
+                                {
+                                    <span>Bắt đầu bằng cách tạo danh mục đầu tiên của bạn</span>
+                                }
+                            </p>
+                            <a asp-action="Add" class="btn btn-primary btn-lg px-4">
+                                <i class="fas fa-plus me-2"></i>Tạo danh mục đầu tiên
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Sorting Info -->
+        @if (Model.Any())
+        {
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm bg-light">
+                        <div class="card-body py-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-sort me-1"></i>
+                                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSort"]"
+                                       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+                                       class="text-decoration-none">
+                                        Sắp xếp theo tên
+                                    </a>
+                                </small>
+                                <small class="text-muted">
+                                    Hiển thị @Model.Count() danh mục
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-hide toast after 3 seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.querySelector('.toast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+                setTimeout(() => toast.hide(), 3000);
+            }
+        });
+    </script>
+</body>
+</html>
+

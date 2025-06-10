@@ -1,0 +1,98 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white border-0 shadow-sm">
+                <div class="card-body py-4 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-1">@ViewData["Title"]</h2>
+                        <p class="opacity-75 mb-0">Đăng nhập để tiếp tục sử dụng hệ thống</p>
+                    </div>
+                    <i class="fas fa-sign-in-alt fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form id="account" method="post">
+                        <h4 class="mb-3 fw-bold">Tài khoản nội bộ</h4>
+                        <hr />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" type="password" autocomplete="current-password" placeholder="Password" />
+                            <label asp-for="Input.Password">Mật khẩu</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" asp-for="Input.RememberMe" />
+                            <label class="form-check-label" asp-for="Input.RememberMe">
+                                @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                        </button>
+
+                        <div class="mt-4">
+                            <p><a asp-page="./ForgotPassword">Quên mật khẩu?</a></p>
+                            <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Đăng ký tài khoản mới</a></p>
+                            <p><a asp-page="./ResendEmailConfirmation">Gửi lại email xác nhận</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- External Login -->
+            @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-3">Sử dụng dịch vụ bên ngoài</h4>
+                        <form asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-outline-dark w-100 mb-2" name="provider" value="@provider.Name">
+                                    <i class="fab fa-@provider.Name.ToLower() me-2"></i>Đăng nhập với @provider.DisplayName
+                                </button>
+                            }
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Custom styles and Font Awesome -->
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        color: white;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+}

@@ -1,0 +1,112 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model TH_LTWEB_03.Models.Product
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+ViewData["Title"] = "Edit Product";
+}
+<h2>Edit Product</h2>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-gradient-warning text-white text-center py-4">
+                    <h2 class="mb-2 fw-bold">
+                        <i class="fas fa-edit me-2"></i>@ViewData["Title"]
+                    </h2>
+                    <p class="mb-0 opacity-75">Cập nhật thông tin sản phẩm: @Model.Name</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Update" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Name" class="form-label fw-bold">
+                                    <i class="fas fa-tag me-1 text-primary"></i>Tên sản phẩm
+                                </label>
+                                <input asp-for="Name" class="form-control form-control-lg border-2" />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="Price" class="form-label fw-bold">
+                                    <i class="fas fa-dollar-sign me-1 text-success"></i>Giá sản phẩm
+                                </label>
+                                <div class="input-group input-group-lg">
+                                    <input asp-for="Price" class="form-control border-2" />
+                                    <span class="input-group-text bg-light">₫</span>
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label fw-bold">
+                                <i class="fas fa-align-left me-1 text-info"></i>Mô tả sản phẩm
+                            </label>
+                            <textarea asp-for="Description" class="form-control border-2" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="CategoryId" class="form-label fw-bold">
+                                    <i class="fas fa-folder me-1 text-warning"></i>Danh mục
+                                </label>
+                                <select asp-for="CategoryId" asp-items="@ViewBag.Categories"
+                                        class="form-select form-select-lg border-2"></select>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label asp-for="ImageUrl" class="form-label fw-bold">
+                                    <i class="fas fa-image me-1 text-secondary"></i>Hình ảnh sản phẩm
+                                </label>
+                                <input type="file" asp-for="ImageUrl" class="form-control form-control-lg border-2"
+                                       accept="image/*" />
+                            </div>
+                        </div>
+
+                        <!-- Current Image Preview -->
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="fas fa-eye me-1 text-info"></i>Ảnh hiện tại
+                                </label>
+                                <div class="text-center">
+                                    <img src="@Model.ImageUrl" alt="Current Image"
+                                         class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="d-flex gap-3 pt-3">
+                            <button type="submit" class="btn btn-warning btn-lg px-4 flex-fill text-white">
+                                <i class="fas fa-save me-2"></i>Cập nhật sản phẩm
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+    }
+</style>

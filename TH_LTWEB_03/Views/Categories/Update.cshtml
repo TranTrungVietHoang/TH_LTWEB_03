@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model TH_LTWEB_03.Models.Category
+
+@{
+    ViewData["Title"] = "Update Category";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body bg-gradient-warning text-white text-center py-4">
+                    <h2 class="mb-2 fw-bold">
+                        <i class="fas fa-edit me-2"></i>@ViewData["Title"]
+                    </h2>
+                    <p class="mb-0 opacity-75">Chỉnh sửa thông tin danh mục: @Model.Name</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <form asp-action="Update" method="post">
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Current Info Display -->
+                        <div class="alert alert-info mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>ID:</strong> @Model.Id | <strong>Tên hiện tại:</strong> @Model.Name
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-bold fs-5">
+                                <i class="fas fa-tag me-2 text-primary"></i>Tên Danh Mục Mới
+                            </label>
+                            <input asp-for="Name" class="form-control form-control-lg border-2"
+                                   placeholder="Nhập tên danh mục mới..." />
+                            <span asp-validation-for="Name" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="d-flex gap-3 pt-3">
+                            <button type="submit" class="btn btn-warning btn-lg px-4 flex-fill text-white">
+                                <i class="fas fa-save me-2"></i>Cập Nhật
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="fas fa-arrow-left me-2"></i>Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-warning {
+        background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+    }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+}

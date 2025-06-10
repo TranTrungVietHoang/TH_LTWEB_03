@@ -1,0 +1,105 @@
+﻿@page
+@model RegisterModel
+
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient-primary text-white shadow-sm border-0">
+                <div class="card-body py-4 px-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="fw-bold mb-1">@ViewData["Title"]</h2>
+                        <p class="mb-0 opacity-75">Tạo tài khoản mới để tham gia hệ thống</p>
+                    </div>
+                    <i class="fas fa-user-plus fa-2x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form đăng ký -->
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <h4 class="fw-bold mb-3">Thông tin đăng ký</h4>
+                        <hr />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.FullName" class="form-control" autocomplete="fullname" placeholder="Họ và tên" />
+                            <label asp-for="Input.FullName">Họ và tên</label>
+                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">Email</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.Password" class="form-control" type="password" autocomplete="new-password" placeholder="Mật khẩu" />
+                            <label asp-for="Input.Password">Mật khẩu</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" />
+                            <label asp-for="Input.ConfirmPassword">Xác nhận mật khẩu</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
+                                <option disabled selected>- Chọn vai trò -</option>
+                            </select>
+                            <label asp-for="Input.Role">Vai trò</label>
+                        </div>
+
+                        <button id="registerSubmit" type="submit" class="btn btn-primary w-100 btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Đăng ký
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- External login -->
+            @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+            {
+                <div class="card shadow-sm border-0 mt-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-3">Hoặc đăng ký bằng dịch vụ bên ngoài</h5>
+                        <form asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                            @foreach (var provider in Model.ExternalLogins!)
+                            {
+                                <button type="submit" class="btn btn-outline-dark w-100 mb-2" name="provider" value="@provider.Name">
+                                    <i class="fab fa-@provider.Name.ToLower() me-2"></i>Đăng ký với @provider.DisplayName
+                                </button>
+                            }
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Custom styles and Font Awesome -->
+<style>
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+}
+
