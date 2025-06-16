@@ -12,7 +12,8 @@ namespace TranTrungVietHoang.Controllers
         private readonly IProductRepository _productRepository;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        public ShoppingCartController(ApplicationDbContext context,UserManager<ApplicationUser> userManager, IProductRepository productRepository)
+
+        public ShoppingCartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IProductRepository productRepository)
         {
             _productRepository = productRepository;
             _context = context;
@@ -24,36 +25,35 @@ namespace TranTrungVietHoang.Controllers
             return View(new Order());
         }
 
-        [
-HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Checkout(Order order)
         {
-            var cart =
-            HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
             if (cart == null || !cart.Items.Any())
             {
-                // Xử lý giỏ hàng trống...
                 return RedirectToAction("Index");
             }
+
             var user = await _userManager.GetUserAsync(User);
             order.UserId = user.Id;
             order.OrderDate = DateTime.UtcNow;
-            order.TotalPrice = cart.Items.Sum(i => i.Price *
-            i.Quantity);
+            order.TotalPrice = cart.Items.Sum(i => i.Price * i.Quantity);
             order.OrderDetails = cart.Items.Select(i => new OrderDetail
             {
                 ProductId = i.ProductId,
                 Quantity = i.Quantity,
                 Price = i.Price
             }).ToList();
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
+
             HttpContext.Session.Remove("Cart");
-            return View("OrderCompleted", order.Id); // Trang xác nhận hoàn thành đơn hàng
+            return View("OrderCompleted", order.Id);
         }
+
         public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
-            // Giả sử bạn có phương thức lấy thông tin sản phẩm từ productId
             var product = await GetProductFromDatabase(productId);
             var cartItem = new CartItem
             {
@@ -62,35 +62,87 @@ HttpPost]
                 Price = product.Price,
                 Quantity = quantity
             };
-            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ??
-            new ShoppingCart();
+
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             cart.AddItem(cartItem);
             HttpContext.Session.SetObjectAsJson("Cart", cart);
+
             return RedirectToAction("Index");
         }
+
         public IActionResult Index()
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
             return View(cart);
         }
 
-        // Các actions khác...
-        private async Task<Product> GetProductFromDatabase(int productId)
-        {
-            // Truy vấn cơ sở dữ liệu để lấy thông tin sản phẩm
-            var product = await _productRepository.GetByIdAsync(productId);
-            return product;
-        }
         public IActionResult RemoveFromCart(int productId)
         {
             var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart");
             if (cart is not null)
             {
                 cart.RemoveItem(productId);
-                // Lưu lại giỏ hàng vào Session sau khi đã xóa mục
                 HttpContext.Session.SetObjectAsJson("Cart", cart);
             }
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateQuantity(int productId, string actionType)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+            if (item != null)
+            {
+                if (actionType == "increase")
+                    item.Quantity++;
+                else if (actionType == "decrease")
+                {
+                    item.Quantity--;
+                    if (item.Quantity <= 0)
+                        cart.RemoveItem(productId);
+                }
+            }
+
+            HttpContext.Session.SetObjectAsJson("Cart", cart);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult IncreaseQuantity(int productId)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null)
+            {
+                item.Quantity++;
+                HttpContext.Session.SetObjectAsJson("Cart", cart);
+            }
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult DecreaseQuantity(int productId)
+        {
+            var cart = HttpContext.Session.GetObjectFromJson<ShoppingCart>("Cart") ?? new ShoppingCart();
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+            if (item != null && item.Quantity > 1)
+            {
+                item.Quantity--;
+                HttpContext.Session.SetObjectAsJson("Cart", cart);
+            }
+            return RedirectToAction("Index");
+        }
+
+
+
+
+
+        private async Task<Product> GetProductFromDatabase(int productId)
+        {
+            var product = await _productRepository.GetByIdAsync(productId);
+            return product;
         }
     }
 }
